@@ -3,62 +3,69 @@ const card = document.querySelector('.card');
 const details = document.querySelector('.details');
 const time = document.querySelector('img.time');
 const icon = document.querySelector('.icon img');
+const loader = document.querySelector('.loader');
+
 
 const updateUI = data => {
+    const { cityDetails, weatherInfo } = data;
+    loader.classList.add('d-none');
 
-    // Destructure the data object
-    const { cityDetails, weather } = data;
-
-    // Update the details template
-    details.innerHTML = `
-    <h5 class="my-3">${cityDetails.EnglishName}</h5>
-    <div class="my-3">${weather.WeatherText}</div>
-    <div class="display-4 my-4">
-        <span>${weather.Temperature.Metric.Value}</span>
-        <span>&deg;C</span>
-    </div>`
-
-    // Update the night/day and icon images
-
-    const iconSrc = `img/icons/${weather.WeatherIcon}.svg`;
-
-    icon.setAttribute('src', iconSrc);
+    // if (card.classList.contains('d-none')) {
+    card.classList.remove('d-none')
 
 
-    let timeSrc = null;
+    details.innerHTML = `<h5 class='my-3'>${cityDetails.EnglishName},  ${cityDetails.AdministrativeArea.ID}, ${cityDetails.Country.ID}.</h5>
+    <span class='my-3'>${weatherInfo.WeatherText}</span>
 
-    if (weather.IsDayTime) {
-        timeSrc = 'img/day.svg'
+    <div class='display-4 my-3'>
+        <span my-3>${weatherInfo.Temperature.Metric.Value} &degC</span>
+    </div>
+    `;
+
+    if (weatherInfo.IsDayTime) {
+        time.setAttribute('src', 'img/day.svg')
     } else {
-        timeSrc = 'img/night.svg'
+        time.setAttribute('src', 'img/night.svg')
     }
 
-    time.setAttribute('src', timeSrc);
+    icon.setAttribute('src', `img/icons/${weatherInfo.WeatherIcon}.svg`)
 
-
-    // Removethe d-none class in the card if present
-    if (card.classList.contains('d-none')) {
-        card.classList.remove('d-none');
-    }
+    let count = 0;
+    scrollDown = setInterval(() => {
+        if (count === 350) {
+            clearInterval(scrollDown);
+        } else {
+            scrollTo(0, count)
+            count += 10;
+        }
+    }, 10)
 }
 
-const UpdateCity = async(city) => {
+// setTimeout(() => scrollTo(outerHeight, outerHeight), 2000);
+
+// Get the city information and 
+const updateCity = async city => {
     const cityDetails = await getCity(city);
-    const weather = await getWeather(cityDetails.Key);
-
-    return { cityDetails, weather };
+    const weatherInfo = await getWeather(cityDetails.Key);
+    return { cityDetails, weatherInfo }
 }
 
-cityForm.addEventListener('submit', e => {
-    // Prevent default action
+
+cityForm.addEventListener('submit', (e) => {
+    city = cityForm.city.value.trim();
+    cityForm.reset();
     e.preventDefault();
 
-    // Get city value
-    const city = cityForm.city.value.trim();
-    cityForm.reset();
 
-    // Update the ui with new city
-    UpdateCity(city)
-        .then(data => updateUI(data))
-        .catch(err => console.log(err.message));
-})
+    // if (city == ''){
+
+    // }
+    loader.classList.remove('d-none');
+    card.classList.add('d-none');
+
+    // Pass the entered city name to the update city function
+    updateCity(city)
+        .then(data => {
+            updateUI(data);
+        })
+});

@@ -1,5 +1,5 @@
 body {
-    background: #eeedec;
+    /* background: #eeedec; */
     letter-spacing: 0.2em;
     font-size: 0.8em;
 }
@@ -8,10 +8,22 @@ body {
     max-width: 400px;
 }
 
+img {
+    max-width: 100%;
+}
+
+.loader {
+    z-index: 10;
+}
+
 .icon {
     position: relative;
     top: -50px;
     border-radius: 50%;
     width: 100px;
     margin-bottom: -50px;
+}
+
+input[type='submit'] {
+    font-size: .9rem;
 }
