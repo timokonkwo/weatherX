@@ -4,6 +4,7 @@ const details = document.querySelector('.details');
 const time = document.querySelector('img.time');
 const icon = document.querySelector('.icon img');
 const loader = document.querySelector('.loader');
+const error = document.querySelector('.error');
 
 
 const updateUI = data => {
@@ -67,5 +68,11 @@ cityForm.addEventListener('submit', (e) => {
     updateCity(city)
         .then(data => {
             updateUI(data);
+        })
+        .catch(err => {
+            loader.classList.add('d-none');
+            error.classList.remove('d-none');
+            error.innerHTML = `<p class="text-center p-3">An error Occured.</p>`;
+            setTimeout(() => error.classList.add('d-none'), 2000)
         })
 });
