@@ -23,11 +23,9 @@ const updateUI = data => {
     </div>
     `;
 
-    if (weatherInfo.IsDayTime) {
-        time.setAttribute('src', 'img/day.svg')
-    } else {
-        time.setAttribute('src', 'img/night.svg')
-    }
+    const timeSrc = weatherInfo.IsDayTime ? 'img/day.svg' : 'img/night.svg';
+
+    time.setAttribute('src', timeSrc);
 
     icon.setAttribute('src', `img/icons/${weatherInfo.WeatherIcon}.svg`)
 
@@ -57,10 +55,6 @@ cityForm.addEventListener('submit', (e) => {
     cityForm.reset();
     e.preventDefault();
 
-
-    // if (city == ''){
-
-    // }
     loader.classList.remove('d-none');
     card.classList.add('d-none');
 
@@ -68,11 +62,28 @@ cityForm.addEventListener('submit', (e) => {
     updateCity(city)
         .then(data => {
             updateUI(data);
+
+            // Save the checked city to LocalStorage or overwrite existing.
+            localStorage.setItem('city', city);
         })
-        .catch(err => {
+
+    // Catch Errors if any and display error message
+    .catch(err => {
+        setTimeout(() => {
             loader.classList.add('d-none');
             error.classList.remove('d-none');
-            error.innerHTML = `<p class="text-center p-3">An error Occured.</p>`;
-            setTimeout(() => error.classList.add('d-none'), 2000)
-        })
+        }, 1000)
+        error.innerHTML = `<p class="text-center p-3">An error Occured.</p>`;
+        setTimeout(() => error.classList.add('d-none'), 3000)
+    })
+
 });
+
+// Load the most recent Weather Check from LocalStorage
+if (localStorage.getItem('city')) {
+    updateCity(localStorage.getItem('city'))
+        .then(data => {
+            updateUI(data);
+            localStorage.setItem('city', city);
+        })
+}
