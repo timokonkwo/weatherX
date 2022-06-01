@@ -9,9 +9,7 @@ const error = document.querySelector('.error');
 
 const updateUI = data => {
     const { cityDetails, weatherInfo } = data;
-    loader.classList.add('d-none');
 
-    // if (card.classList.contains('d-none')) {
     card.classList.remove('d-none')
 
 
@@ -28,6 +26,8 @@ const updateUI = data => {
     time.setAttribute('src', timeSrc);
 
     icon.setAttribute('src', `img/icons/${weatherInfo.WeatherIcon}.svg`)
+
+    loader.classList.add('d-none');
 
     let count = 0;
     scrollDown = setInterval(() => {
