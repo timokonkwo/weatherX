@@ -5,6 +5,7 @@ const time = document.querySelector('img.time');
 const icon = document.querySelector('.icon img');
 const loader = document.querySelector('.loader');
 const error = document.querySelector('.error');
+const forecast = new Forecast();
 
 
 const updateUI = data => {
@@ -40,15 +41,6 @@ const updateUI = data => {
     }, 10)
 }
 
-// setTimeout(() => scrollTo(outerHeight, outerHeight), 2000);
-
-// Get the city information and 
-const updateCity = async city => {
-    const cityDetails = await getCity(city);
-    const weatherInfo = await getWeather(cityDetails.Key);
-    return { cityDetails, weatherInfo }
-}
-
 
 cityForm.addEventListener('submit', (e) => {
     city = cityForm.city.value.trim();
@@ -59,16 +51,16 @@ cityForm.addEventListener('submit', (e) => {
     card.classList.add('d-none');
 
     // Pass the entered city name to the update city function
-    updateCity(city)
+    forecast.updateCity(city)
         .then(data => {
             updateUI(data);
-
             // Save the checked city to LocalStorage or overwrite existing.
             localStorage.setItem('city', city);
         })
 
     // Catch Errors if any and display error message
     .catch(err => {
+        console.log(err);
         setTimeout(() => {
             loader.classList.add('d-none');
             error.classList.remove('d-none');
@@ -81,9 +73,8 @@ cityForm.addEventListener('submit', (e) => {
 
 // Load the most recent Weather Check from LocalStorage
 if (localStorage.getItem('city')) {
-    updateCity(localStorage.getItem('city'))
+    forecast.updateCity(localStorage.getItem('city'))
         .then(data => {
             updateUI(data);
-            localStorage.setItem('city', city);
         })
 }
